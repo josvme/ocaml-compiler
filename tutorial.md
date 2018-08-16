@@ -15,6 +15,17 @@ The OCaml code for the rules has a parameter called lexbuf that defines the inpu
 ## Setting up Ocaml
 opam install merlin
 opam install utop # A better shell
+opam install ocp-indent # Document extractor
+
+## Ocaml Tips
+http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/
+
+
+## Utop
+To get the type of something in Utop use #typeof -> #typeof "List" -> Notice the ""
+
+## Things to see
+Once you setup the config, restart vscode as new path needs to be loaded.
 
 ## Managing Associativity and Precedence
 http://www.cs.columbia.edu/~sedwards/classes/2017/4115-fall/syntax.pdf (from slide 72)
@@ -27,6 +38,13 @@ Haskell HKT type is seen in things like Functor/Monads.
 
 ## Basic Usage
 ; to sequence and ;; for declarations and expressions.
+In Ocaml all types see to be small letters.
+
+Ocaml float operations needs to add a . at the end like - is written as -. And it operates on float.
+
+Tuples by (42, "S")
+let p = (4, "D");;
+val p : int * string = (4, "D")
 
 In ocaml = compares values and == compares pointers
 (42, "A");; # A tuple
@@ -36,12 +54,13 @@ Concatenate with @
 List.hd and List.tl
 7 :: [];; # To cons
 
+Like haskell returns should be of same time in both branches
 if 4=8 then 44 else 5;;
 
 Local binding -> let a=5 in a + 5
 Global binding -> let name = "F2"
 
-Let is different from haskell, which doesn't allow mutation
+Let is different from haskell, which doesn't allow mutation. This let actually binds in succession based on previous value.
 let a = 4 in
 let a = a + 2 in
 let a = a
@@ -53,7 +72,7 @@ print_int a;;
 ;;
 Unbound value a
 
-This is a function
+This is an anonymous function defined using fun, otherwise use let.
 let square = fun y -> y*y;;
 
 Closure like let is similar to Elixir, lambda, which is bound at definition and not like JS or python
@@ -92,10 +111,91 @@ The and keyword allows for mutual recursion.
 
 # let rec fac n = if n < 2 then 1 else n * fac1 n and fac1 n = fac (n - 1);;
 
+function keyword can be used to make pattern matches.
+
 @ is list concatenation
 :: is add element to beginning of list 
 http://rigaux.org/language-study/syntax-across-languages-per-language/OCaml.html
 
 type is recursive and mutually recursive ones can be defined with and. 
 
+## Higher order functions
+List.map (fun x -> x*x) [1;2;3] (* notice ; *)
+
+List.iter print_int [1;2;3]
+123
+
+## Type declarations
+type name1 = typedef1
+and name2 = typedef2
+
+## Pattern matching
+let andg p = match p 
+  with (true, true) -> true
+    | _ -> false
+
+let length = function
+[] -> "empty"
+| [_] -> "singleton"
+| [_; _] -> "pair"
+| [_; _; _] -> "triplet"
+| hd :: tl -> "many";;
+use when for guards and as for naming matches. 
+
+## Records in Ocaml
+type base = {x: int; y:int};;
+Ocaml normally have ;, instead of ,.
+
+## ADT 
+type seasons = Hello | Goaway;; (* Tag name should be capital *)
+let weather = function 
+  Hello -> "Hai"
+  Goaway -> "Bye"
+;;
+
+## Exceptions
+exception Foo of string;;
+use raise to raise an exception and try to try it. 
+
+## Modules
+writing things in a file abc.ml makes a module abc and you can import it via open abc
+Everything is public and each file is a module. You can also put interfaces in .mli and implementation in .ml
+
+## Functors
+A functor is a module which is parameterized by another module, just like a Higher order functions. It is a bit similar Functor in Haskell.
+Functors returns operations that work exclusively for that value. For example, 
+Set module provides a Make functor, which takes one argument which is a module and provides type of elements t and comparison function compare. 
+
+ module Int_set = Set.Make (struct 
+  type t = int 
+  let compare = compare
+  end);;
+
+For sets of string, standard lib provides String module with t and compare. 
+module String_set = Set.Make (String);;
+
+Defining a Functor can be done as 
+
+module F (X : X_type) : Y_type =
+struct
+end
+
+Instantiating can be done as follows.
+
+module Int_set = Set.Make (struct type t = int let compare = compare end);; 
+
+## Imperative features
+5;6;7;; (* only 7 is output *)
+print result is unit. 
+
+Arrays are made by let a = [|1;2;3|] and they are mutable. a.(1) <- 4;;
+You can also use Array.make 5 0;; and accessed using a.(2);;
+Array.of_list to make array from list. or Array.append. 
+Arrays are O(n) in appending and O(1) in random access while List is the other way around and also immutable. 
+Array.make 4 5;; Size 4 with element 5.
+
+## Hash Table
+module StringHash = Hashtbl.Make(struct type t = string   (* type of keys *) 
+let equal x y = x = y   (* use structural comparison *) 
+let hash = Hashtbl.hash ( * generic hash function *) end); 
 
