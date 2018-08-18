@@ -13,3 +13,9 @@ ocamllex generates a .ml file from .mll file for us and we can compile and run i
 %token <int> LITERAL is the information int, the lexer will give us. 
 
 Convention is to use Uppercase for tokens/terminals and lower case for non-terminal.
+
+## Testing grammar
+ menhir --interpret --interpret-show-cst parser.mly
+
+INT ID LPAREN RPAREN LBRACE ID LPAREN LITERAL RPAREN SEMI RBRACE EOF
+INT ID LPAREN RPAREN LBRACE INT ID SEMI ID EQ LITERAL SEMI RBRACE EOF

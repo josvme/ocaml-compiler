@@ -12,10 +12,14 @@ https://dev.realworldocaml.org/toc.html
 ## ocamllex
 The OCaml code for the rules has a parameter called lexbuf that defines the input, including the position in the input file, as well as the text that was matched by the regular expression.
 
-## Setting up Ocaml
+## Setting up Ocaml (ubuntu 17.04)
 opam install merlin
 opam install utop # A better shell
 opam install ocp-indent # Document extractor
+opam install menhir # A better yacc
+sudo apt install llvm llvm-runtime m4
+opam install llvm.4.0.0
+
 
 ## Ocaml Tips
 http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/
