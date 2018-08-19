@@ -25,6 +25,7 @@ expr =
   | BinOp of expr * op * expr
   | If of expr * expr * expr
   | For of expr * expr
+  | While of expr * expr
   | Noexpr (* Required to handle empty cases *)
   | Return of expr
   | ExprList of expr list (* No idea how this will turn out to be *)
@@ -32,3 +33,5 @@ expr =
   | Spawn of func_decl
   | Send of int * func_decl
   | Receive of func_decl
+
+type program = bind list * func_decl list

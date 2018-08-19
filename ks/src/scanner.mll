@@ -3,7 +3,8 @@
 { open Parser }
 
 rule token = parse
-  [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
+  [' ' '\t' '\r'] { token lexbuf } (* Whitespace *)
+| '\n'     { NEWLINE } (* new line *)
 | "/*"     { comment lexbuf }           (* Comments *)
 | "def"    { FUNCDEF }
 | '('      { LPAREN }
@@ -14,7 +15,7 @@ rule token = parse
 | ':'      { COLON }
 | ','      { COMMA }
 | "send"   { SEND }
-| "receive"   { RECV }
+| "recv"   { RECV }
 | "spawn"  { SPAWN }
 | '+'      { PLUS }
 | '-'      { MINUS }

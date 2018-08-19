@@ -19,3 +19,42 @@ Convention is to use Uppercase for tokens/terminals and lower case for non-termi
 
 INT ID LPAREN RPAREN LBRACE ID LPAREN LITERAL RPAREN SEMI RBRACE EOF
 INT ID LPAREN RPAREN LBRACE INT ID SEMI ID EQ LITERAL SEMI RBRACE EOF
+
+.mly
+The first section of the file is for declarations, including token and type specifications, precedence directives, and other output directives; and the second section is for specifying the grammar of the language to be parsed.   
+
+We'll start by declaring the list of tokens. A token is declared using the syntax %token <type>uid, where the <type> is optional and uid is a capitalized identifier.
+
+%token <string> STRING
+%token NULL
+%token COLON
+
+The <type> specifications mean that a token carries a value. The STRING token carries a string value. The remaining tokens, such as TRUE, FALSE, or the punctuation, aren't associated with any value, and so we can omit the <type> specification.
+
+We'll start describing the JSON grammar by declaring the start symbol to be the non-terminal symbol prog, and by declaring that when parsed, a prog value should be converted into an OCaml value of type Json.value option. We then end the declaration section of the parser with a %%:
+
+%start <Json.value option> prog
+%%
+
+
+rev_object_fields:
+  | (* empty *) { [] }
+  | obj = rev_object_fields; COMMA; k = ID; COLON; v = value
+    { (k, v) :: obj }
+  ;
+
+menhir is left recursive and hence the grammar is more efficient if LR. So this is like recursively expanding and outputting the value.
+
+## Lexer
+
+rule read =
+  parse
+  | white    { read lexbuf }
+  | newline  { next_line lexbuf; read lexbuf }
+  | int      { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | float    { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
+  | "true"   { TRUE }
+
+Here in white and newline we recursively skip values, and returns the following token but others we don't. Also in lexer precedence is for the longest match and not in the order. 
+
+For example, the first input trueX: 167 matches the regular expression "true" for four characters, and it matches id for five characters. The longer match wins, and the return value is ID "trueX".
