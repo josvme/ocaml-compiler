@@ -17,9 +17,12 @@ opam install merlin
 opam install utop # A better shell
 opam install ocp-indent # Document extractor
 opam install menhir # A better yacc
-sudo apt install llvm llvm-runtime m4
-opam install llvm.4.0.0
+sudo apt install llvm-3.8 m4
+opam install llvm.4.8
 
+## Setting up merlin
+To add all the stuff to merlin use this script. 
+https://gist.github.com/unhammer/c1ac7320141f09ac38e0
 
 ## Ocaml Tips
 http://roscidus.com/blog/blog/2013/10/13/ocaml-tips/
