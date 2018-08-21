@@ -11,7 +11,7 @@ type func_decl = {
    ftype: typ;
    fname: string;
    formals: bind list;
-   body: expr; (* We have expr list *)
+   body: expr list; (* We have expr list *)
 }
 and 
 expr = 
@@ -23,15 +23,17 @@ expr =
   | Unop of unop * expr
   | Assign of string * expr
   | Call of string * expr list
-  | If of expr * expr * expr
-  | For of expr * expr
-  | While of expr * expr
+  | If of expr * expr list * expr list
+  | For of expr * expr list
+  | While of expr * expr list
   | Noexpr (* Required to handle empty cases *)
   | Return of expr
   | Spawn of func_decl
   | Send of int * func_decl
   | Receive of func_decl
-  | ExprBlock of expr list
 
   (*| ExprList of expr list, No idea how this will turn out to be *)
 type program = bind list * func_decl list
+
+type exprList = 
+  ExprBlock of expr list

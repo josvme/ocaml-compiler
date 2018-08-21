@@ -39,7 +39,7 @@ decls:
   | decls func_decl {fst $1, ($2 :: snd $1)}
 
 func_decl:
-  FUNCDEF ID LPAREN formals_opt RPAREN COLON typ EQ expr { { 
+  FUNCDEF ID LPAREN formals_opt RPAREN COLON typ EQ b_expr_list { { 
     ftype = $7;
     fname = $2;
     formals = $4;
@@ -69,7 +69,14 @@ vdecl:
 expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
- 
+
+expr_list:
+  /* nothing */ {[]}
+  | expr_list expr NEWLINE {$2 :: $1}
+  
+b_expr_list:
+  LBRACE expr_list RBRACE { ExprBlock($2) }
+
 expr:
     LITERAL          { Literal($1) }
   | TRUE             { BoolLit(true) }
@@ -93,15 +100,14 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | IF LPAREN expr RPAREN expr %prec NOELSE { If($3, $5, ExprBlock([])) }
-  | IF LPAREN expr RPAREN expr ELSE expr { If($3, $5, $7) }
-  | FOR LPAREN expr RPAREN expr { For($3, $5) }
-  | WHILE LPAREN expr RPAREN expr { While($3, $5) }
-  | RETURN expr { Return($2) }
+  | IF LPAREN expr RPAREN b_expr_list %prec NOELSE { If($3, $5, ExprBlock([])) }
+  | IF LPAREN expr RPAREN b_expr_list ELSE b_expr_list { If($3, $5, $7) }
+  | FOR LPAREN expr RPAREN b_expr_list { For($3, $5) }
+  | WHILE LPAREN expr RPAREN b_expr_list { While($3, $5) }
+  | RETURN expr NEWLINE { Return($2) }
   | SPAWN func_decl { Spawn($2) }
   | SEND LITERAL func_decl { Send($2, $3) }
   | RECV func_decl { Receive($2) }
-  | LBRACE expr RBRACE { ExprBlock($2) }
 
 actuals_opt:
     /* nothing */ { [] }
