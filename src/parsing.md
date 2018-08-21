@@ -55,6 +55,8 @@ rule read =
   | float    { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
   | "true"   { TRUE }
 
-Here in white and newline we recursively skip values, and returns the following token but others we don't. Also in lexer precedence is for the longest match and not in the order. 
+Here in white and newline we recursively skip values, and returns the following token but others we don't. Also in lexer precedence is for the longest match and not in the order. So here white and newline doesn't return anything as they call themselves and pass over to others. 
 
 For example, the first input trueX: 167 matches the regular expression "true" for four characters, and it matches id for five characters. The longer match wins, and the return value is ID "trueX".
+
+Parsing functions take as arguments a lexical analyzer (a function from lexer buffers to tokens) and a lexer buffer, and return the semantic attribute of the corresponding entry point. Lexical analyzer functions are usually generated from a lexer specification by the ocamllex program. So if you define as tokens in .mly file, all these will be taken from lexer file. And the scanner.mll has a open Parser in the top. 
