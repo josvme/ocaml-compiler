@@ -37,3 +37,8 @@ type program = bind list * func_decl list
 
 type exprList = 
   ExprBlock of expr list
+
+(*
+Working Input
+FUNCDEF ID LPAREN RPAREN COLON INT EQ LBRACE RETURN ID PLUS ID NEWLINE RBRACE EOF
+*)

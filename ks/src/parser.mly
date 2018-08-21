@@ -59,19 +59,12 @@ typ:
   | BOOL { Bool }
   | VOID { Void }
 
-vdecl_list:
-  /* nothing */ { [] }
-  | vdecl_list vdecl { $2 :: $1 }
-
 vdecl:
   typ ID SEMI { ($1, $2) } /* (ID, value) pair */
 
-expr_opt:
-    /* nothing */ { Noexpr }
-  | expr          { $1 }
-
 expr_list:
   /* nothing */ {[]}
+  | expr_list RETURN expr NEWLINE { Return($3) :: $1}
   | expr_list expr NEWLINE {$2 :: $1}
   
 b_expr_list:
@@ -104,7 +97,6 @@ expr:
   | IF LPAREN expr RPAREN b_expr_list ELSE b_expr_list { If($3, $5, $7) }
   | FOR LPAREN expr RPAREN b_expr_list { For($3, $5) }
   | WHILE LPAREN expr RPAREN b_expr_list { While($3, $5) }
-  | RETURN expr NEWLINE { Return($2) }
   | SPAWN func_decl { Spawn($2) }
   | SEND LITERAL func_decl { Send($2, $3) }
   | RECV func_decl { Receive($2) }
