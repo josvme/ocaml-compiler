@@ -5,7 +5,7 @@
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA NEWLINE COLON
 %token PLUS MINUS TIMES DIVIDE ASSIGN NOT
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
-%token RETURN IF ELSE FOR WHILE INT BOOL VOID RECV SPAWN SEND FUNCDEF 
+%token RETURN IF ELSE FOR WHILE INT BOOL UNIT RECV SPAWN SEND FUNCDEF 
 %token <int> LITERAL
 %token <string> ID
 %token EOF
@@ -57,7 +57,7 @@ formals_list:
 typ:
   INT { Int }
   | BOOL { Bool }
-  | VOID { Void }
+  | UNIT { Unit }
 
 vdecl:
   typ ID SEMI { ($1, $2) } /* (ID, value) pair */
@@ -68,7 +68,7 @@ expr_list:
   | expr_list expr NEWLINE {$2 :: $1}
   
 b_expr_list:
-  LBRACE expr_list RBRACE { ExprBlock($2) }
+  LBRACE expr_list RBRACE { $2 }
 
 expr:
     LITERAL          { Literal($1) }
@@ -93,7 +93,7 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | IF LPAREN expr RPAREN b_expr_list %prec NOELSE { If($3, $5, ExprBlock([])) }
+  | IF LPAREN expr RPAREN b_expr_list %prec NOELSE { If($3, $5, [Noexpr]) }
   | IF LPAREN expr RPAREN b_expr_list ELSE b_expr_list { If($3, $5, $7) }
   | FOR LPAREN expr RPAREN b_expr_list { For($3, $5) }
   | WHILE LPAREN expr RPAREN b_expr_list { While($3, $5) }

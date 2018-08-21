@@ -30,7 +30,7 @@ type token =
   | WHILE
   | INT
   | BOOL
-  | VOID
+  | UNIT
   | RECV
   | SPAWN
   | SEND
@@ -76,7 +76,7 @@ let yytransl_const = [|
   285 (* WHILE *);
   286 (* INT *);
   287 (* BOOL *);
-  288 (* VOID *);
+  288 (* UNIT *);
   289 (* RECV *);
   290 (* SPAWN *);
   291 (* SEND *);
@@ -308,7 +308,7 @@ let yynames_const = "\
   WHILE\000\
   INT\000\
   BOOL\000\
-  VOID\000\
+  UNIT\000\
   RECV\000\
   SPAWN\000\
   SEND\000\
@@ -412,7 +412,7 @@ let yyact = [|
 ; (fun __caml_parser_env ->
     Obj.repr(
 # 60 "parser.mly"
-         ( Void )
+         ( Unit )
 # 417 "parser.ml"
                : 'typ))
 ; (fun __caml_parser_env ->
@@ -449,7 +449,7 @@ let yyact = [|
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'expr_list) in
     Obj.repr(
 # 71 "parser.mly"
-                          ( ExprBlock(_2) )
+                          ( _2 )
 # 454 "parser.ml"
                : 'b_expr_list))
 ; (fun __caml_parser_env ->
@@ -623,7 +623,7 @@ let yyact = [|
     let _5 = (Parsing.peek_val __caml_parser_env 0 : 'b_expr_list) in
     Obj.repr(
 # 96 "parser.mly"
-                                                   ( If(_3, _5, ExprBlock([])) )
+                                                   ( If(_3, _5, [Noexpr]) )
 # 628 "parser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->

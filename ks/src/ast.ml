@@ -18,7 +18,7 @@ expr =
     Literal of int
   | BoolLit of bool
   | Id of string
-  | BinOp of expr * op * expr
+  | Binop of expr * op * expr
   | Func of func_decl
   | Unop of unop * expr
   | Assign of string * expr
@@ -31,12 +31,8 @@ expr =
   | Spawn of func_decl
   | Send of int * func_decl
   | Receive of func_decl
-
   (*| ExprList of expr list, No idea how this will turn out to be *)
 type program = bind list * func_decl list
-
-type exprList = 
-  ExprBlock of expr list
 
 (*
 Working Input

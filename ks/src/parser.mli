@@ -30,7 +30,7 @@ type token =
   | WHILE
   | INT
   | BOOL
-  | VOID
+  | UNIT
   | RECV
   | SPAWN
   | SEND
