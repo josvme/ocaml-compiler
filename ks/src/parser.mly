@@ -39,7 +39,7 @@ decls:
   | decls func_decl {fst $1, ($2 :: snd $1)}
 
 func_decl:
-  FUNCDEF ID LPAREN formals_opt RPAREN COLON typ EQ b_expr_list { { 
+  FUNCDEF ID LPAREN formals_opt RPAREN COLON typ ASSIGN b_expr_list { { 
     ftype = $7;
     fname = $2;
     formals = $4;
