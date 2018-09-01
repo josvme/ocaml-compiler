@@ -169,7 +169,7 @@ writing things in a file abc.ml makes a module abc and you can import it via ope
 Everything is public and each file is a module. You can also put interfaces in .mli and implementation in .ml
 
 ## Functors
-A functor is a module which is parameterized by another module, just like a Higher order functions. It is a bit similar Functor in Haskell.
+A functor is a module which is parameterized by another module, just like a Higher order functions. It is a bit similar Typeclass in Haskell.
 Functors returns operations that work exclusively for that value. For example, 
 Set module provides a Make functor, which takes one argument which is a module and provides type of elements t and comparison function compare. 
 
@@ -206,3 +206,19 @@ module StringHash = Hashtbl.Make(struct type t = string   (* type of keys *)
 let equal x y = x = y   (* use structural comparison *) 
 let hash = Hashtbl.hash ( * generic hash function *) end); 
 
+# Modules
+Modules are like normal modules. Open will put it in scope. Otherwise we need to call it with full name just like in elixir. By default all things in a module are public. Inorder to avoid that we will use a module interface. So we only write things there which should be publicly available. And mli files hould be compiled before .ml files. 
+
+ocamlopt compiles to native code.
+
+We can nested modules. Inside E.ml file, we write
+```ocaml
+module H = struct 
+  let message = "H"
+end 
+
+(* Accessing from outside *)
+let () =
+  E.H.message
+```
+For doing it inside interfaces use **sig** keyword.

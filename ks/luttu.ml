@@ -20,5 +20,6 @@ let _ =
   let ast = Parser.program Scanner.token lexbuf in
   match !action with
     Ast -> print_endline (Ast.string_of_program ast)
+    | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate ast))
     | _ -> print_endline "Error"
   with s -> raise s

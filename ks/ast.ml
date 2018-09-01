@@ -1,4 +1,4 @@
-type op = Add | Mul | Div | Sub | Assign | Greater | Geq | And | Or | Leq | Less | Neq | Equal
+type op = Add | Mul | Div | Sub | Greater | Geq | And | Or | Leq | Less | Neq | Equal
 
 type typ = Bool | Int | Unit
 
@@ -31,7 +31,7 @@ expr =
   | Spawn of func_decl
   | Send of int * func_decl
   | Receive of func_decl
-  (*| ExprList of expr list, No idea how this will turn out to be *)
+  | ExprList of expr list (* No idea how this will turn out to be *)
 type program = bind list * func_decl list
 
 (*
@@ -54,7 +54,6 @@ let string_of_op = function
   | Geq -> ">="
   | And -> "&&"
   | Or -> "||"
-  | Assign -> "="
 
 let string_of_uop = function
     Neg -> "-"
@@ -82,6 +81,7 @@ let rec string_of_expr = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ String.concat "\n" (List.map string_of_expr s)
   | Func(f) -> string_of_fdecl f
   | Return(r) -> "Return " ^ string_of_expr r
+  | ExprList (l) -> "ExprList " ^ String.concat ", " (List.map string_of_expr l)
 
 and string_of_fdecl fdecl =
   string_of_typ fdecl.ftype ^ " " ^
