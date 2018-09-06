@@ -99,6 +99,8 @@ let a = 42 in
 b 0;;
 - : int = 5
 
+A name is bound after the “in” clause of a “let.” If the name is re-bound, the binding takes effect after the “in.
+
 let seems to be like a lambda internally. They are semantically same.  
 
 # let a = 3 in a + 2;;
@@ -113,7 +115,8 @@ fac
 (n-1);;
 Unbound value fac
 
-You need to use rec to make it visible. 
+You need to use rec to make it visible. The “rec” keyword makes a name visible to its definition. This only makes sense for functions.
+
 The and keyword allows for mutual recursion. 
 
 # let rec fac n = if n < 2 then 1 else n * fac1 n and fac1 n = fac (n - 1);;
@@ -222,3 +225,4 @@ let () =
   E.H.message
 ```
 For doing it inside interfaces use **sig** keyword.
+
