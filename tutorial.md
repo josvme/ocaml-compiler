@@ -226,3 +226,10 @@ let () =
 ```
 For doing it inside interfaces use **sig** keyword.
 
+# Mutation and Ref
+ref can be used to make a reference which is mutable. := can write value to this reference. 
+```ocaml
+let result = ref 1 in
+    for i = 2 to n do
+      result := i * !result
+```
