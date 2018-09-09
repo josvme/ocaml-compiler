@@ -18,7 +18,7 @@ expr =
     Literal of int
   | BoolLit of bool
   | Var of typ * string
-  | String of string
+  | Str of string
   | Struct of bind list
   | Id of string
   | Binop of expr * op * expr
@@ -68,8 +68,8 @@ let rec string_of_expr = function
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
   | Id(s) -> s
-  | String(s) -> s
-  | Struct (s) -> "Struct { " ^ (String.concat "\n" (List.map (fun (x,y) -> (string_of_typ x) ^ y) s)) ^ " }"
+  | Str(s) -> s
+  | Struct (s) -> "Struct { " ^ (String.concat "\n" (List.map (fun (x,y) -> (string_of_typ x) ^ " "^ y) s)) ^ " }" ^ "\n" 
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
@@ -80,9 +80,9 @@ let rec string_of_expr = function
   | Receive(f) -> "Receive " ^ string_of_fdecl f
   | Send(i, f) -> "Send " ^ string_of_int i ^ string_of_fdecl f
   | Spawn(f) -> "Spawn " ^ string_of_fdecl f 
-  | If(e, s, ([n])) -> "if (" ^ string_of_expr e ^ ")\n" ^ String.concat "\n" (List.map string_of_expr s) 
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
-     String.concat "\n" (List.map string_of_expr s1)  ^ "else\n" ^ String.concat "\n" (List.map string_of_expr s1)
+     String.concat "\n" (List.map string_of_expr s1)  ^ "else\n" ^ String.concat "\n" (List.map string_of_expr s2)
+  | If(e, s, ([n])) -> "if (" ^ string_of_expr e ^ ")\n" ^ String.concat "\n" (List.map string_of_expr s) 
   | For(c, s) -> "for (" ^ string_of_expr c  ^ String.concat "\n" (List.map string_of_expr s)
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ String.concat "\n" (List.map string_of_expr s)
   | Func(f) -> string_of_fdecl f

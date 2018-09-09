@@ -43,7 +43,7 @@ rule token = parse
 | "return" { RETURN }
 | "int"    { INT }
 | "struct" { STRUCT }
-| "string" { INT }
+| "string" { STRING }
 | "bool"   { BOOL }
 | "unit"   { UNIT }
 | "true"   { TRUE }

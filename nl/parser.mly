@@ -5,7 +5,7 @@
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA NEWLINE COLON LSQUARE RSQUARE
 %token PLUS MINUS TIMES DIVIDE ASSIGN NOT
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
-%token RETURN IF ELSE FOR WHILE INT BOOL UNIT RECV SPAWN SEND FUNCDEF STRUCT VAR 
+%token RETURN IF ELSE FOR WHILE INT BOOL UNIT RECV SPAWN SEND FUNCDEF STRUCT VAR STRING
 %token <int> LITERAL
 %token <string> ID
 %token <string> STR 
@@ -50,7 +50,7 @@ func_decl:
   } } 
 
 struct_decl:
-  STRUCT ID LPAREN struct_list RPAREN {
+  STRUCT ID LBRACE struct_list RBRACE {
     $4
   }
 
@@ -58,9 +58,8 @@ type_id:
   typ ID { ($1, $2) }
 
 struct_list:
-  /* nothing */ { [] }
-  | NEWLINE type_id struct_list { $2 :: $3}
-  | NEWLINE { [] }
+   NEWLINE {[]}
+  | struct_list type_id NEWLINE {$2 :: $1}
 
 formals_opt:
   /* nothing */ { [] }
@@ -74,7 +73,7 @@ typ:
   INT { Int }
   | BOOL { Bool }
   | UNIT { Unit }
-  | STR { Str}
+  | STRING { Str}
 
 vdecl:
   typ ID SEMI { Var ($1, $2) } /* (ID, value) pair */
@@ -92,6 +91,7 @@ expr:
   | TRUE             { BoolLit(true) }
   | FALSE            { BoolLit(false) }
   | ID               { Id($1) }
+  | STR              { Str($1) }
   | typ ID           { Var($1, $2) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
@@ -118,6 +118,7 @@ expr:
   | SPAWN func_decl { $2 }
   | SEND LITERAL func_decl { $3 }
   | RECV func_decl { $2 }
+  | struct_decl { Struct $1 }
 
 actuals_opt:
     /* nothing */ { [] }
