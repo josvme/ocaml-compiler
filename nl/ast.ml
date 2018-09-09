@@ -17,6 +17,7 @@ and
 expr = 
     Literal of int
   | BoolLit of bool
+  | Var of typ * string
   | String of string
   | Struct of bind list
   | Id of string
@@ -34,8 +35,8 @@ expr =
   | Send of int * func_decl
   | Receive of func_decl
   | ExprList of expr list (* No idea how this will turn out to be *)
-
-type program = bind list * func_decl list
+  | Newline of unit
+type program = expr list
 
 (*
 Working Input
@@ -72,7 +73,7 @@ let rec string_of_expr = function
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
-  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Assign(v, e) -> v ^ " = " ^ string_of_expr e ^ "\n" 
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
@@ -85,8 +86,10 @@ let rec string_of_expr = function
   | For(c, s) -> "for (" ^ string_of_expr c  ^ String.concat "\n" (List.map string_of_expr s)
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ String.concat "\n" (List.map string_of_expr s)
   | Func(f) -> string_of_fdecl f
-  | Return(r) -> "Return " ^ string_of_expr r
+  | Return(r) -> "Return " ^ string_of_expr r ^ "\n" 
   | ExprList (l) -> "ExprList " ^ String.concat ", " (List.map string_of_expr l)
+  | Var (t, s) -> "Var " ^ string_of_typ t ^ " " ^ s ^ "\n" 
+  | Newline () -> "\n"
 
 and string_of_fdecl fdecl =
   string_of_typ fdecl.ftype ^ " " ^
@@ -105,6 +108,5 @@ and string_of_typ = function
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
-let string_of_program (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)
+let string_of_program (fundecls) =
+  String.concat "" (List.map string_of_expr fundecls) ^ "\n"

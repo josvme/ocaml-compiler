@@ -44,6 +44,7 @@ let to_string = function
   | TRUE  -> "TRUE"
   | FALSE  -> "FALSE"
   | STR(x) -> "STR"
+  | VAR -> "VAR"
 
 let token_to_strings lexbuf =
   let rec loop acc =  function
