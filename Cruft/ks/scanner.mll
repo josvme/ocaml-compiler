@@ -1,6 +1,8 @@
 (* Ocamllex scanner for MicroC *)
 
 { open Parser }
+(* Everything except *)
+let string_char = [^'"']*
 
 rule token = parse
   [' ' '\t' '\r'] { token lexbuf } (* Whitespace *)
@@ -44,6 +46,7 @@ rule token = parse
 | ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof { EOF }
+| '"' (string_char as content) '"' { STR (content) } (* String constant, no escaping as of now *)
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
 and comment = parse

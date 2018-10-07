@@ -1,3 +1,4 @@
+/*
 def abc(int a): int = {
   int c
   c = a*a
@@ -7,7 +8,7 @@ def abc(int a): int = {
     int a
     string b
   }
-  return c 
+  return c
 }
 
 def iftest(): int = {
@@ -17,11 +18,12 @@ def iftest(): int = {
     return 6
   }
 }
+*/
 
 def bcd(int c): string = {
   return abc(19)
 }
-
+/*
 def recur(int c): int = {
   if ( c >= 3) {
   return 1 + recur(c-1)
@@ -29,3 +31,4 @@ def recur(int c): int = {
     return 0
   }
 }
+*/

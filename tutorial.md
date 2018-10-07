@@ -233,3 +233,8 @@ let result = ref 1 in
     for i = 2 to n do
       result := i * !result
 ```
+
+: is used to type annotation
+```ocaml
+let named_values:(string, llvalue) Hashtbl.t = Hashtbl.create 10
+```

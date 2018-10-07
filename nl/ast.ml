@@ -1,6 +1,6 @@
 type op = Add | Mul | Div | Sub | Greater | Geq | And | Or | Leq | Less | Neq | Equal
 
-type typ = Bool | Int | Unit | Str | Struct | Func
+type typ = Bool | Int | Unit | Str | Struct
 
 type unop = Neg | Not
 
@@ -103,7 +103,6 @@ and string_of_typ = function
   | Bool -> "bool"
   | Unit -> "unit"
   | Str -> "string"
-  | Func -> "function"
   | Struct -> "struct"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"

@@ -19,11 +19,11 @@ let _ =
   Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
   let lexbuf = Lexing.from_channel !channel in
   try
+    let ast = Parser.program Scanner.token lexbuf in
     match !action with
       Ast -> 
-      let ast = Parser.program Scanner.token lexbuf in
       print_endline (Ast.string_of_program ast)
     | Token -> Utils.token_to_strings lexbuf
-    (* | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate ast)) *)
+    | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.convert_all ast)) 
     | _ -> print_endline "Error"
   with s -> raise s

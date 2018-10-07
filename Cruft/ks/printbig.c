@@ -6,5 +6,5 @@
 
 void printbig(int c)
 {
-  printf("%d", c);
+  printf("%d\n", c);
 }

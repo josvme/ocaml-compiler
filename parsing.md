@@ -73,3 +73,7 @@ To debug the ocamlyacc
 export OCAMLRUNPARAM='p'
 
 It will print all the states.
+
+# Generating machine code
+Your one stop reference
+https://llvm.moe/ocaml/Llvm.html#TYPEllcontext

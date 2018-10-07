@@ -5,9 +5,10 @@
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA NEWLINE COLON
 %token PLUS MINUS TIMES DIVIDE ASSIGN NOT
 %token EQ NEQ LT LEQ GT GEQ TRUE FALSE AND OR
-%token RETURN IF ELSE FOR WHILE INT BOOL UNIT RECV SPAWN SEND FUNCDEF 
+%token RETURN IF ELSE FOR WHILE INT BOOL UNIT RECV SPAWN SEND FUNCDEF STRING 
 %token <int> LITERAL
 %token <string> ID
+%token <string> STR 
 %token EOF
 
 %nonassoc NOELSE
@@ -35,8 +36,8 @@ Now we will process them one by one
 
 decls:
   /* nothing */ {[], []} /* [(id, value)](value definitions) and [function definitions] */
-  | decls vdecl {($2 :: fst $1), snd $1}
-  | decls func_decl {fst $1, ($2 :: snd $1)}
+  | decls vdecl NEWLINE {($2 :: fst $1), snd $1}
+  | decls func_decl NEWLINE {fst $1, ($2 :: snd $1)}
 
 func_decl:
   FUNCDEF ID LPAREN formals_opt RPAREN COLON typ ASSIGN b_expr_list { { 
@@ -57,24 +58,26 @@ formals_list:
 typ:
   INT { Int }
   | BOOL { Bool }
+  | STRING { Str}
   | UNIT { Unit }
 
 vdecl:
-  typ ID SEMI { ($1, $2) } /* (ID, value) pair */
+  typ ID NEWLINE { ($1, $2) } /* (ID, value) pair */
 
 expr_list:
-  /* nothing */ {[]}
+  | NEWLINE {[]}
   | expr_list RETURN expr NEWLINE { Return($3) :: $1}
   | expr_list expr NEWLINE {$2 :: $1}
   
 b_expr_list:
-  LBRACE expr_list RBRACE { $2 }
+  LBRACE expr_list RBRACE { List.rev $2 }
 
 expr:
     LITERAL          { Literal($1) }
   | TRUE             { BoolLit(true) }
   | FALSE            { BoolLit(false) }
   | ID               { Id($1) }
+  | typ ID NEWLINE   { Vardec($1, $2) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mul,  $3) }

@@ -1,6 +1,6 @@
 type op = Add | Mul | Div | Sub | Greater | Geq | And | Or | Leq | Less | Neq | Equal
 
-type typ = Bool | Int | Unit
+type typ = Bool | Int | Unit | Str
 
 type unop = Neg | Not
 
@@ -19,6 +19,7 @@ expr =
   | BoolLit of bool
   | Id of string
   | Binop of expr * op * expr
+  | Vardec of typ * string 
   | Func of func_decl
   | Unop of unop * expr
   | Assign of string * expr
@@ -82,12 +83,13 @@ let rec string_of_expr = function
   | Func(f) -> string_of_fdecl f
   | Return(r) -> "Return " ^ string_of_expr r
   | ExprList (l) -> "ExprList " ^ String.concat ", " (List.map string_of_expr l)
+  | Vardec(t, i) -> "Var dec " ^ string_of_typ t ^ " " ^ i 
 
 and string_of_fdecl fdecl =
   string_of_typ fdecl.ftype ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
-  String.concat "" (List.map string_of_expr fdecl.body) ^
+  String.concat "\n" (List.map string_of_expr fdecl.body) ^
   "}\n"
 
 and string_of_typ = function
