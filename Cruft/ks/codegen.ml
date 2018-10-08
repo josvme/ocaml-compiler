@@ -1,7 +1,13 @@
 module L = Llvm
 module A = Ast
 
-module StringMap = Map.Make(String)
+module StringMap = Hashtbl.Make(
+  struct 
+  type t = string
+  let equal x y = x = y
+  let hash = Hashtbl.hash
+  end
+);;
 exception Error of string
 
 let translate (globals, functions) = 
@@ -20,8 +26,8 @@ let translate (globals, functions) =
   let global_vars = 
     let global_var m (t, n) =
       let init = L.const_int (ltype_of_typ t) 0 in 
-      StringMap.add n (L.define_global n init the_module) m in 
-    List.fold_left global_var StringMap.empty globals in 
+      StringMap.add m n (L.define_global n init the_module); m in 
+    List.fold_left global_var (StringMap.create 100) globals in 
 
   let printf_t = L.var_arg_function_type i32_t [| i32_t |] in 
   let printf_func = L.declare_function "printf" printf_t the_module in 
@@ -35,12 +41,12 @@ let translate (globals, functions) =
       and formal_types = Array.of_list
           (List.map (fun (t, _) -> ltype_of_typ t) fdecl.A.formals) 
       in let ftype = L.function_type (ltype_of_typ fdecl.A.ftype) formal_types in 
-      StringMap.add name (L.define_function name ftype the_module, fdecl) m in 
-    List.fold_left function_decl StringMap.empty functions in 
+      StringMap.add m name (L.define_function name ftype the_module, fdecl); m in 
+    List.fold_left function_decl (StringMap.create 100) functions in 
 
   let build_function_body fdecl =
     let (the_function, _) = 
-      StringMap.find fdecl.A.fname function_decls in 
+      StringMap.find function_decls fdecl.A.fname in 
     let builder = L.builder_at_end context (L.entry_block the_function) in
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in 
 
@@ -50,19 +56,19 @@ let translate (globals, functions) =
         let local = L.build_alloca (ltype_of_typ t) n builder in 
         (* make a build_store v p b = store %v, %p *)
         ignore (L.build_store p local builder);
-        StringMap.add n local m in 
+        StringMap.add m n local; m in 
 
       let add_local m (t, n) = 
         let local_var = L.build_alloca (ltype_of_typ t) n builder in 
-        StringMap.add n local_var m in 
+        StringMap.add m n local_var; m in 
 
       (* combine both to allocate on stack *)
-      let formals = List.fold_left2 add_formal StringMap.empty fdecl.A.formals
+      let formals = List.fold_left2 add_formal (StringMap.create 100) fdecl.A.formals
           (Array.to_list (L.params the_function)) in 
-      List.fold_left add_local formals fdecl.A.formals in 
+      List.fold_left add_local formals [] in 
 
-    let lookup n = try StringMap.find n local_vars
-      with Not_found -> StringMap.find n global_vars
+    let lookup n = try StringMap.find local_vars n
+      with Not_found -> StringMap.find global_vars n
     in
 
     let add_terminal builder f =
@@ -76,7 +82,7 @@ let translate (globals, functions) =
     let rec expr builder = function
         A.Literal i -> L.const_int i32_t i 
       | A.Vardec (t, n) ->  let local_var = L.build_alloca (ltype_of_typ t) n builder in 
-        StringMap.add n local_var local_vars; local_var  (* This is completely wrong as the map in immutable and changes wont be reflected*)
+        StringMap.add local_vars n local_var; local_var  (* This is completely wrong as the map in immutable and changes wont be reflected*)
       | A.BoolLit b -> L.const_int i1_t (if b then 1 else 0)
       | A.Noexpr -> L.const_int i32_t 0
       (* build_load v name b, creates %name = load %v *)
@@ -110,7 +116,7 @@ let translate (globals, functions) =
       | A.Call ("printbig", [e]) -> 
         L.build_call printbig_func [| (expr builder e)|] "printbig" builder
       | A.Call (f, act) -> 
-        let (fdef, fdecl) = StringMap.find f function_decls in 
+        let (fdef, fdecl) = StringMap.find function_decls f in 
         let actuals = List.rev (List.map (expr builder) (List.rev act)) in 
         let result = (match fdecl.A.ftype with 
               A.Unit -> ""

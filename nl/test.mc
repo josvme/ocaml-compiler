@@ -23,6 +23,11 @@ def iftest(): int = {
 def bcd(int c): string = {
   return abc(19)
 }
+
+def main() : int = {
+  return bcd(5)
+}
+
 /*
 def recur(int c): int = {
   if ( c >= 3) {

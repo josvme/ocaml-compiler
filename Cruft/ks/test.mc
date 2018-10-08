@@ -1,12 +1,17 @@
 def abc (): int = { 
-  return (6+6+6+6*10) 
+  return (2*10+2000) 
 } 
 def abcd (int c): int = { 
-  return c 
+  return c*1000
 } 
 def main(): int= { 
-  printbig(44)
-  printbig(66)
+  printbig(10)
   int k
-  return abcd(77)
+  k = 2000 
+  printbig(k)
+  printbig(abcd(3))
+  int j
+  j=abc()
+  printbig(j)
+  return 50
 }
