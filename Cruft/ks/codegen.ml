@@ -75,6 +75,8 @@ let translate (globals, functions) =
     (* Code for expression *)
     let rec expr builder = function
         A.Literal i -> L.const_int i32_t i 
+      | A.Vardec (t, n) ->  let local_var = L.build_alloca (ltype_of_typ t) n builder in 
+        StringMap.add n local_var local_vars; local_var  (* This is completely wrong as the map in immutable and changes wont be reflected*)
       | A.BoolLit b -> L.const_int i1_t (if b then 1 else 0)
       | A.Noexpr -> L.const_int i32_t 0
       (* build_load v name b, creates %name = load %v *)

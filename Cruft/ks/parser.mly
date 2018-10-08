@@ -77,7 +77,7 @@ expr:
   | TRUE             { BoolLit(true) }
   | FALSE            { BoolLit(false) }
   | ID               { Id($1) }
-  | typ ID NEWLINE   { Vardec($1, $2) }
+  | typ ID { Vardec($1, $2) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mul,  $3) }

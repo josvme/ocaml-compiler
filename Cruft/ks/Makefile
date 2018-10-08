@@ -9,7 +9,7 @@ all : luttu.native printbig.o
 
 .PHONY : luttu.native
 luttu.native :
-	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis -cflags -w,+a-4 \
+	ocamlbuild -tag debug -use-ocamlfind -pkgs llvm,llvm.analysis -cflags -w,+a-4 \
 		luttu.native
 
 # "make clean" removes all generated files
